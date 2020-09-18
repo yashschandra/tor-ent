@@ -1,0 +1,35 @@
+<html>
+    <body>
+        <table id="chat">
+        </table>
+        <input type="text" id="recepient" value="yash"/>
+        <textarea id="message">hello</textarea><button onclick="sendMessage()">Send</button>
+    </body>
+    <script>
+        var ws = new WebSocket("ws://localhost:17667/ws");
+        ws.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            newMessageEntry(data.content, 1);
+        }
+
+        function newMessageEntry(data, idx) {
+            var table = document.getElementById("chat");
+            var row = table.insertRow(-1);
+            for (i=0; i<2; i++) {
+                let cell = row.insertCell(i);
+                if (i===idx) {
+                    cell.innerText = data;
+                }
+            }
+        }
+
+        function sendMessage() {
+            var message = document.getElementById("message").value;
+            var recepient = document.getElementById("recepient").value;
+            var data = {to: recepient, content: message};
+            newMessageEntry(message, 0);
+            ws.send(JSON.stringify(data));
+        }
+
+    </script>
+</html>

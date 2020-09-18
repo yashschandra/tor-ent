@@ -1,0 +1,13 @@
+FROM alpine:edge
+
+RUN apk update && apk add tor && apk add go
+RUN cp /etc/tor/torrc.sample /etc/tor/torrc && echo "HiddenServiceDir /var/lib/tor/hidden_service/" >> /etc/tor/torrc && echo "HiddenServicePort 80 127.0.0.1:17666" >> /etc/tor/torrc
+RUN export PATH="/usr/local/go/bin:$PATH"
+RUN export GOPATH=/opt/go/ 
+RUN export PATH=$PATH:$GOPATH/bin
+RUN mkdir -p /opt/go/tor-ent
+
+ADD . /opt/go/tor-ent
+
+
+CMD ["/bin/sh", "/opt/go/tor-ent/server/start.sh"]
